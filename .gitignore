@@ -1,6 +1,7 @@
 # My configurations:
-.idea
-statics/mountfile
+.idea/
+statics/mountfile/
+.gitignore
 
 # Windows:
 Thumbs.db
