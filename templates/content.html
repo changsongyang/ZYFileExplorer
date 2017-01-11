@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>电子相册</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href='{{static_url("css/font-awesome.min.css")}}'/>
+    <link rel="stylesheet" type="text/css" href='{{static_url("css/bootstrap.min.css")}}' />
+</head>
+<body>
+    {% raw htmlcontent %}
+
+
+    <script type="text/javascript" src="{{static_url('js/jquery-3.1.1.js')}}"></script>
+    <script type="text/javascript" src="{{static_url('js/bootstrap.min.js')}}"></script>
+    <script>
+        if (location.pathname == '/'){
+            $(".pager li").addClass('disabled');
+            $(".pager li a").attr("href","javascript:void(0)");
+        }else {
+            $(".pager li").removeClass('disabled');
+        }
+
+        $('.count').click(function(){
+            var love = $(this).parent().parent().parent().siblings().find('.love');
+            var total = $(this).parent().parent().parent().siblings().find('.total');
+            $.post('/count',{'url': $(this).parent().parent().parent().siblings().find('a').attr('data-orign')},function(callback){
+                var ret_list = JSON.parse(callback);
+                var tot = "总数：" .concat(ret_list[0]);
+                var lov = "喜欢：" .concat(ret_list[1]);
+                love.text(lov);
+                total.text(tot);
+            });
+        });
+
+        $('.del').click(function () {
+            if ($(this).text() == '删除'){
+                var url1 = $(this).parent().parent().parent().siblings().find('a').attr('data-orign');
+                $.post('/del', {'url': url1, 'status':0});
+                $(this).text('激活');
+                $(this).parent().parent().parent().siblings().find('a').attr('href', 'javascript:void(0)');
+                $(this).parent().parent().parent().siblings().find('a').addClass('disabled');
+            }else {
+                var url2 = $(this).parent().parent().parent().siblings().find('a').attr('data-orign');
+                $.post('/del', {'url': url2, 'status':1});
+                $(this).text('删除');
+                $(this).parent().parent().parent().siblings().find('a').attr('href', url2);
+                $(this).parent().parent().parent().siblings().find('a').removeClass('disabled');
+            }
+
+        });
+    </script>
+</body>
+</html>

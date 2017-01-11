@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图片</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href='{{static_url("css/bootstrap.min.css")}}'/>
+    <link rel="stylesheet" type="text/css" href='{{static_url("css/font-awesome.min.css")}}'/>
+    <style>
+        .img-list .item .lazy{
+            height: 200px;
+            width: auto;
+        }
+
+        .item{
+            border: 2px solid transparent;
+        }
+
+        .item:hover{
+            border: 2px solid red;
+        }
+    </style>
+</head>
+<body>
+    {% raw htmlcontent %}
+
+    <script type="text/javascript" src="{{static_url('js/jquery-3.1.1.js')}}"></script>
+    <script type="text/javascript" src="{{static_url('js/jquery.lazyload.js')}}"></script>
+    <script>
+        $(function(){
+            $('img.lazy').lazyload({
+                threshold: 100,
+                placeholder : "http://127.0.0.1/static/img/grey.gif",      // 图片未加载时，占位
+                effect: "fadeIn",               // 图片出现的效果，值有show(直接显示),fadeIn(淡入),slideDown(下拉)
+                effect_speed: 1000,
+                event: 'scroll',
+                skip_invisible: true,
+                failure_limit: 2,
+
+                load: function(){                  // 当图片路径加载之后，触发此事件
+                    $(this).addClass('img-responsive');
+                    $(this).removeClass('lazy');
+                }
+            });
+
+            $('i').click(function(){
+                if($(this).attr('class') == "fa fa-3x fa-heart-o"){  //喜欢
+                    $(this).addClass('fa-heart');
+                    $(this).removeClass('fa-heart-o');
+                    $.post('/favor',{'imgurl':$(this).parent().parent().siblings().find("img").attr("data-original"),'favorid':'1'});
+                }else{   //不喜欢
+                    $(this).addClass('fa-heart-o');
+                    $(this).removeClass('fa-heart');
+                    $.post('/favor',{'imgurl':$(this).parent().parent().siblings().find("img").attr("data-original"),'favorid':'0'});
+                }
+
+            });
+        })
+
+
+    </script>
+
+
+</body>
+</html>
