@@ -113,8 +113,12 @@ class FavorHandler(tornado.web.RequestHandler):
         root = settings.root()
         imgfile = os.path.normpath(os.path.join(root, imgpath))
         imgmd5 = filecheck.md5file(imgfile)
-        imgname = imgpath.rsplit('/', 1)[1]
-        imgdir = imgpath.rsplit('/', 1)[0]
+        try:
+            imgname = imgpath.rsplit('/', 1)[1]
+            imgdir = imgpath.rsplit('/', 1)[0]
+        except IndexError as e:
+            imgname = imgpath
+            imgdir = '/'
         imgdirmd5 = filecheck.md5str(imgdir)
 
         zyimg.write_favor(imgmd5, imgname, imgdir, imgdirmd5, favorid)
