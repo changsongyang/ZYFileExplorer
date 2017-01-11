@@ -83,7 +83,10 @@ class PhotoHandler(tornado.web.RequestHandler):
         if isinstance(result, dict):
             html_list = []
             for i in result['img']:
-                imgurl = '/static/mountfile/%s/%s' % (URL, i)
+                if URL:
+                    imgurl = '/static/mountfile/%s/%s' % (URL, i)
+                else:
+                    imgurl = '/static/mountfile/%s' % i
                 imgpath = imgurl.replace('/static/mountfile/', '', 1)
                 imgfile = os.path.normpath(os.path.join(root, imgpath))
                 imgmd5 = filecheck.md5file(imgfile)

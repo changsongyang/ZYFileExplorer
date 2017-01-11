@@ -3,10 +3,14 @@
 import tornado.ioloop
 import tornado.web
 from views import index
+import os
 
+# 使用这种配置方式，在其他目录运行run.py也不会影响找不到templates和statics目录
+template_path = os.path.join(os.path.dirname(__file__), "templates")
+static_path = os.path.join(os.path.dirname(__file__), "statics")
 settings = {
-    'template_path': 'templates',
-    'static_path': 'statics',
+    'template_path': template_path,
+    'static_path': static_path,
 }
 
 application = tornado.web.Application([
