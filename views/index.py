@@ -92,17 +92,19 @@ class PhotoHandler(tornado.web.RequestHandler):
                 imgmd5 = filecheck.md5file(imgfile)
                 favorid = zyimg.query_favor(imgmd5)
 
-                if favorid == 1:
-                    favorurl = '<span style="color:red"><i class="fa fa-heart fa-3x" aria-hidden="true"></i></span>'
-                else:
-                    favorurl = '<span style="color:red"><i class="fa fa-3x fa-heart-o" aria-hidden="true"></i></span>'
+                # if favorid == 1:
+                #     favorurl = '<span style="color:red"><i class="fa fa-heart fa-3x" aria-hidden="true"></i></span>'
+                # else:
+                #     favorurl = '<span style="color:red"><i class="fa fa-3x fa-heart-o" aria-hidden="true"></i></span>'
+                #
+                # html_content = '<div class="img-list"><div style="position: relative"><div class="item"><img class="lazy" data-original="%s" /></div><div style="position:absolute;bottom: 0;right: 0;">%s</div></div><div style="height: 20px"></div>' % (
+                #     imgurl, favorurl)
 
-                html_content = '<div class="img-list"><div style="position: relative"><div class="item"><img class="lazy" data-original="%s" /></div><div style="position:absolute;bottom: 0;right: 0;">%s</div></div><div style="height: 20px"></div>' % (
-                    imgurl, favorurl)
+                html_content = '<li><img src="{}" /></li>'.format(imgurl)
 
                 html_list.append(html_content)
 
-            self.render('photo.html', htmlcontent=''.join(html_list))
+            self.render('photo2.html', htmlcontent=''.join(html_list))
 
 
 class FavorHandler(tornado.web.RequestHandler):

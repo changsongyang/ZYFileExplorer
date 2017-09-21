@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 import settings
@@ -32,6 +32,18 @@ class Direcord(Base):
     total = Column(Integer, nullable=False)
     favorcount = Column(Integer, nullable=False)
     status = Column(Integer, nullable=False)
+
+class Tags(Base):
+    __tablename__ = 'tags'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(32), unique=True)
+
+
+class TagsToFavor(Base):
+    __tablename__ = 'tagstofavor'
+    nid = Column(Integer, primary_key=True, autoincrement=True)
+    tag_id = Column(Integer, ForeignKey('tags.id'))
+    favor_id = Column(String(32), ForeignKey('favor.imgmd5'))
 
 
 def init_db():

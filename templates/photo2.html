@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>图片</title>
+		<meta name="keywords" content="图片" />
+		<meta name="description" content="图片" />
+		<meta name=apple-mobile-web-app-title content="photoSlider">
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<meta name=renderer content=webkit>
+		<meta name="full-screen" content="yes">
+		<meta name="browsermode" content="application">
+		<meta name="x5-fullscreen" content="true">
+		<meta name="x5-page-mode" content="app">
+		<link rel="stylesheet" type="text/css" href="{{static_url("css/photoSlider.min.css")}}" />
+	</head>
+	<body>
+		<div id="photo">
+			<div id="loading" class="spinner">
+				<div class="bounce1"></div>
+				<div class="bounce2"></div>
+				<div class="bounce3"></div>
+			</div>
+			<ul id="pic-view" class="pic-view">
+                {% raw htmlcontent %}
+			</ul>
+		</div>
+	</body>
+
+</html>
+<script src="{{static_url('js/photoSlider.min.js')}}" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	document.onreadystatechange = subSomething;
+	function subSomething() {
+		if (document.readyState == 'complete') {
+			setTimeout(function(){
+				var load=document.getElementById('loading');
+				load.style.opacity=0;
+				document.getElementById('pic-view').setAttribute('class','pic-view show');
+				load.remove();
+			},500);
+		}
+	}
+		window.onload=function(){
+		photoSlide({
+		wrap: document.getElementById('photo'),
+		loop: true,
+		autoPlay:false,
+		autoTime:16000,
+		pagination:true
+	});
+	}
+</script>
