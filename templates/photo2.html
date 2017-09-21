@@ -15,6 +15,7 @@
 		<meta name="x5-fullscreen" content="true">
 		<meta name="x5-page-mode" content="app">
 		<link rel="stylesheet" type="text/css" href="{{static_url("css/photoSlider.min.css")}}" />
+		<link rel="stylesheet" type="text/css" href="{{static_url("css/style.css")}}" />
 	</head>
 	<body>
 		<div id="photo">
@@ -29,7 +30,32 @@
 		</div>
 	</body>
 
+<div class="wrap">
+	<div class="menu"><img class="icon_menu" src="{{static_url('img/menu.png')}}" /><span></span></div>
+
+	<div class="btn btn2" data-num="2"><span><span onclick="console.log(2)"></span></div>
+
+	<div class="btn btn4" data-num="4"><span onclick="console.log(4)"></span></div>
+</div>
+
+<script type="text/javascript" src="{{static_url('js/zepto.min.js')}}"></script>
+<script type="text/javascript">
+$(function(){
+	$(".menu").click(function(){
+		var span = $(this).find("span");
+		if(span.hasClass("open")){
+			span.removeClass("open").addClass("close");
+			$(".btn").removeClass("open").addClass("close");
+		}else{
+			span.removeClass("close").addClass("open");
+			$(".btn").removeClass("close").addClass("open");
+		}
+	});
+});
+</script>
+
 </html>
+{#<script type="text/javascript" src="{{static_url('js/jquery-3.1.1.js')}}"></script>#}
 <script src="{{static_url('js/photoSlider.min.js')}}" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
 	document.onreadystatechange = subSomething;
