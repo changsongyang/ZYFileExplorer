@@ -15,7 +15,7 @@
 		<meta name="x5-fullscreen" content="true">
 		<meta name="x5-page-mode" content="app">
 		<link rel="stylesheet" type="text/css" href="{{static_url("css/photoSlider.min.css")}}" />
-		<link rel="stylesheet" type="text/css" href="{{static_url("css/style.css")}}" />
+        <link rel="stylesheet" type="text/css" href='{{static_url("css/bootstrap.min.css")}}'/>
 	</head>
 	<body>
 		<div id="photo">
@@ -28,54 +28,86 @@
                 {% raw htmlcontent %}
 			</ul>
 		</div>
-	</body>
 
-<div class="wrap">
-	<div class="menu"><img class="icon_menu" src="{{static_url('img/menu.png')}}" /><span></span></div>
 
-	<div class="btn btn2" data-num="2"><span><span onclick="console.log(2)"></span></div>
+        <!-- 模态框（Modal） -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">标签设置</h4>
+                    </div>
+                    <div class="modal-body">
+                        <span>当前标签:</span><br>
+                        <label for="tag1">
+                            可选标签:
+                            <select id="tag1">
+                                <option value="0" selected="selected"></option>
+                                {% for item in alltag %}
+                                    <option value="{{ item[0] }}">{{ item[1] }}</option>
+                                {% end %}
+                            </select>
+                        </label><br>
+                        <label for="tag2">
+                            新增标签:
+                            <input id="tag2" type="text"/>
+                        </label>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary" onclick="tagAdd(this)">提交</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
 
-	<div class="btn btn4" data-num="4"><span onclick="console.log(4)"></span></div>
-</div>
+        <script type="text/javascript" src="{{static_url('js/jquery-3.1.1.js')}}"></script>
+        <script type="text/javascript" src="{{static_url('js/bootstrap.min.js')}}"></script>
+        <script src="{{static_url('js/photoSlider.min.js')}}" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+            document.onreadystatechange = subSomething;
+            function subSomething() {
+                if (document.readyState == 'complete') {
+                    setTimeout(function(){
+                        var load=document.getElementById('loading');
+                        load.style.opacity=0;
+                        document.getElementById('pic-view').setAttribute('class','pic-view show');
+                        load.remove();
+                    },500);
+                }
+            }
+                window.onload=function(){
+                photoSlide({
+                wrap: document.getElementById('photo'),
+                loop: true,
+                autoPlay:true,
+                autoTime:999999,
+                pagination:false
+            });
+            }
+        </script>
 
-<script type="text/javascript" src="{{static_url('js/zepto.min.js')}}"></script>
-<script type="text/javascript">
-$(function(){
-	$(".menu").click(function(){
-		var span = $(this).find("span");
-		if(span.hasClass("open")){
-			span.removeClass("open").addClass("close");
-			$(".btn").removeClass("open").addClass("close");
-		}else{
-			span.removeClass("close").addClass("open");
-			$(".btn").removeClass("close").addClass("open");
-		}
-	});
-});
-</script>
+        <script type="text/javascript">
+            function tagQry(arg) {
+                var imgurl = $(arg).attr('src');
+                $('.btn-primary').attr("src", imgurl);
 
+                $.post('/tagquery',{ 'imgurl':imgurl}, function (callback) {
+                    $('.modal-body span').text(callback)
+                });
+            }
+
+            function tagAdd(arg) {
+                var chs = $("select").val();
+                var newchs = $("#tag2").val();
+                var imgurl = $(arg).attr('src');
+
+                $.post('/tagadd',{'chs':chs, 'newchs': newchs, 'imgurl':imgurl}, function (callback) {
+                    $('.modal-body span').text(callback)
+                });
+            }
+        </script>
+    </body>
 </html>
-{#<script type="text/javascript" src="{{static_url('js/jquery-3.1.1.js')}}"></script>#}
-<script src="{{static_url('js/photoSlider.min.js')}}" type="text/javascript" charset="utf-8"></script>
-<script type="text/javascript">
-	document.onreadystatechange = subSomething;
-	function subSomething() {
-		if (document.readyState == 'complete') {
-			setTimeout(function(){
-				var load=document.getElementById('loading');
-				load.style.opacity=0;
-				document.getElementById('pic-view').setAttribute('class','pic-view show');
-				load.remove();
-			},500);
-		}
-	}
-		window.onload=function(){
-		photoSlide({
-		wrap: document.getElementById('photo'),
-		loop: true,
-		autoPlay:false,
-		autoTime:16000,
-		pagination:true
-	});
-	}
-</script>
+

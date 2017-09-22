@@ -22,7 +22,6 @@ class Favor(Base):
     imgname = Column(String(255), nullable=False)
     imgdir = Column(String(255), nullable=False)
     imgdirmd5 = Column(String(32), nullable=False, index=True)
-    favorid = Column(Integer)
 
 
 class Direcord(Base):
@@ -30,8 +29,8 @@ class Direcord(Base):
     dirmd5 = Column(String(32), primary_key=True)
     dirname = Column(String(255), nullable=False)
     total = Column(Integer, nullable=False)
-    favorcount = Column(Integer, nullable=False)
     status = Column(Integer, nullable=False)
+
 
 class Tags(Base):
     __tablename__ = 'tags'
@@ -60,51 +59,69 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 
-def query_favor(imgmd5):
-    ret = session.query(Favor).filter_by(imgmd5=imgmd5).first()
+def query_alltag():
+    alltag = session.query(Tags.id, Tags.name).all()
+    return alltag
+
+
+def query_tag(imgmd5):
+    imgtag = session.query(Tags.name).join(TagsToFavor).filter(TagsToFavor.favor_id == imgmd5).all()
+    str = '当前标签:'
+    for i in imgtag:
+        str += '{},'.format(i[0])
+
     session.close()
-    if ret:
-        return ret.favorid
+    return str
 
 
 def query_dir(dirmd5):
     ret = session.query(Direcord).filter_by(dirmd5=dirmd5).first()
     session.close()
     if ret:
-        return [ret.total, ret.favorcount, ret.status]
+        return [ret.total, ret.status]
 
 
-def query_favor_dir(imgdirmd5):
-    ret = session.query(Favor).filter_by(imgdirmd5=imgdirmd5, favorid=1).all()
-    session.close()
+def write_tag(name):
+    ret = session.query(Tags).filter_by(name=name).first()
+    id = None
+    if not ret:
+        obj = Tags(name=name)
+        session.add(obj)
+        session.flush()  # 在commit提交前执行这几句就可以获取自增id，不用再次去数据库查询
+        session.refresh(obj)
+        id = obj.id
+    session.commit()
+    return id
 
-    if ret:
-        return len(ret)
-    else:
-        return 0
+
+def write_tag_favor(tagid, favorid):
+    ret = session.query(TagsToFavor).filter_by(tag_id=tagid, favor_id=favorid).first()
+
+    if not ret:
+        obj = TagsToFavor(tag_id=tagid, favor_id=favorid)
+        session.add(obj)
+    session.commit()
 
 
-def write_favor(imgmd5, imgname, imgdir, imgdirmd5, favorid):
+def write_favor(imgmd5, imgname, imgdir, imgdirmd5):
     ret = session.query(Favor).filter_by(imgmd5=imgmd5).first()
 
     if not ret:
-        obj = Favor(imgmd5=imgmd5, imgname=imgname, imgdir=imgdir, imgdirmd5=imgdirmd5, favorid=favorid)
+        obj = Favor(imgmd5=imgmd5, imgname=imgname, imgdir=imgdir, imgdirmd5=imgdirmd5)
         session.add(obj)
-    else:
-        session.query(Favor).filter(Favor.imgmd5 == imgmd5).update({"favorid": favorid})
 
     session.commit()
 
 
-def write_dir(dirmd5, dirname, total, favorcount, status):
+def write_dir(dirmd5, dirname, total, status):
     ret = session.query(Direcord).filter_by(dirmd5=dirmd5).first()
 
     if not ret:
-        obj = Direcord(dirmd5=dirmd5, dirname=dirname, total=total, favorcount=favorcount, status=status)
+        obj = Direcord(dirmd5=dirmd5, dirname=dirname, total=total, status=status)
         session.add(obj)
     else:
         session.query(Direcord).filter(Direcord.dirmd5 == dirmd5).update(
-            {"total": total, "favorcount": favorcount, "status": status})
+            {"total": total, "status": status})
 
     session.commit()
 

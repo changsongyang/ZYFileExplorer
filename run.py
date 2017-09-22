@@ -15,7 +15,8 @@ settings = {
 
 application = tornado.web.Application([
     (r"/photo(?P<url>/.*)", index.PhotoHandler),
-    (r"/favor", index.FavorHandler),
+    (r"/tagquery", index.TagQueryHandler),
+    (r"/tagadd", index.TagAddHandler),
     (r"/count", index.CountHandler),
     (r"/del", index.DelHandler),
     (r"/.*", index.IndexHandler),
